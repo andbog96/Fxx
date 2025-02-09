@@ -7,6 +7,7 @@ let package = Package(
     name: "Fxx",
     dependencies: [
         .package(url: "https://github.com/apple/swift-argument-parser.git", from: "1.2.0"),
+        .package(url: "https://github.com/SimplyDanny/SwiftLintPlugins", from: "0.58.2"),
     ],
     targets: [
         // Targets are the basic building blocks of a package, defining a module or a test suite.
