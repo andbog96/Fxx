@@ -1,0 +1,11 @@
+(func fib (N)
+    (cond (lesseq N 2)
+        1
+        (plus (fib (minus N 1)) (fib (minus N 2)))
+    )
+)
+
+(fib 1)
+(fib 3)
+(fib 5)
+(fib 10)

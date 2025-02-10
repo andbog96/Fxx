@@ -1,0 +1,10 @@
+(func myFactorial (N)
+    (cond (lesseq N 1)
+        1
+        (times N (myFactorial (minus N 1)))
+    ) 
+)
+
+(myFactorial 1)
+(myFactorial 5)
+(myFactorial 15)
