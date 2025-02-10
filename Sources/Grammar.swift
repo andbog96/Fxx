@@ -1,45 +1,24 @@
-protocol Grammar {
-    associatedtype Value
-    associatedtype Input
+struct Program {
+    var value: [Element]
 
-    init(value: Value)
-
-    static func checkInput(_: Input) -> Value?
-}
-
-extension Grammar {
-    init?(_ input: Input) {
-        guard let value = Self.checkInput(input) else {
+    init?(_ value: [Element]) {
+        guard !value.isEmpty else {
             return nil
         }
 
-        self.init(value: value)
+        self.value = value
     }
 }
 
-protocol SimpleGrammar: Grammar where Value == Input {
-    static func checkInput(_: Input) -> Bool
-}
-
-extension SimpleGrammar {
-    static func checkInput(_ input: Input) -> Value? {
-        Self.checkInput(input) ? input : nil
-    }
-}
-
-struct Program: SimpleGrammar {
+struct List {
     var value: [Element]
 
-    static func checkInput(_ input: Input) -> Bool {
-        !input.isEmpty
-    }
-}
+    init?(_ value: [Element]) {
+        guard !value.isEmpty else {
+            return nil
+        }
 
-struct List: SimpleGrammar {
-    var value: [Element]
-
-    static func checkInput(_ input: Input) -> Bool {
-        !input.isEmpty
+        self.value = value
     }
 }
 
@@ -51,11 +30,15 @@ enum Element {
 
 typealias Atom = Identifier
 
-struct Identifier: SimpleGrammar {
+struct Identifier {
     var value: [Inner]
 
-    static func checkInput(_ input: Input) -> Bool {
-        if case .letter = input.first { true } else { false }
+    init?(_ value: [Inner]) {
+        guard case .letter = value.first else {
+            return nil
+        }
+
+        self.value = value
     }
 
     enum Inner {
@@ -64,11 +47,15 @@ struct Identifier: SimpleGrammar {
     }
 }
 
-struct Letter: SimpleGrammar {
+struct Letter {
     var value: Character
 
-    static func checkInput(_ input: Input) -> Bool {
-        input.isLetter
+    init?(_ value: Character) {
+        guard value.isLetter else {
+            return nil
+        }
+
+        self.value = value
     }
 }
 
@@ -84,19 +71,27 @@ enum Literal {
     }
 }
 
-struct DecimalDigit: Grammar {
+struct DecimalDigit {
     var value: UInt8
 
-    static func checkInput(_ input: Character) -> UInt8? {
-        UInt8(String(input))
+    init?(_ character: Character) {
+        guard let value = UInt8(String(character)) else {
+            return nil
+        }
+
+        self.value = value
     }
 }
 
-struct Integer: SimpleGrammar {
+struct Integer {
     var value: [DecimalDigit]
 
-    static func checkInput(_ input: Input) -> Bool {
-        !input.isEmpty
+    init?(_ value: [DecimalDigit]) {
+        guard !value.isEmpty else {
+            return nil
+        }
+
+        self.value = value
     }
 }
 
