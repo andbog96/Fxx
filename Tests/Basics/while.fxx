@@ -1,0 +1,12 @@
+(setq x true)
+(setq i 0)
+(while x (cond (equal i 100) (setq x false) (setq i (plus i 1))))
+i
+
+(setq x true)
+(setq i 0)
+(while x (cond (equal i 100) (break) (setq i (plus i 1))))
+i
+
+(break)
+x
