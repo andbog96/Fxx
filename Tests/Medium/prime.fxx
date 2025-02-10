@@ -1,0 +1,18 @@
+(func isPrime (N)
+    (prog ()
+        (func helper (N divisor)
+            (cond (greater (times divisor divisor) N)
+                true
+                (cond (equal (mod N divisor) 0)
+                    false
+                    (helper N (plus divisor 1))
+                )
+            )
+        )
+    )
+)
+
+(isPrime 2)
+(isPrime 5)
+(isPrime 10)
+(isPrime 37)

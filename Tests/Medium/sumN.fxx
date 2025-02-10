@@ -1,0 +1,12 @@
+(setq N 100)
+(setq i 0)
+(setq sum 0)
+
+(while (less i N)
+    (prog ()
+        (setq i (plus i 1))
+        (setq sum (plus sum i))
+    ) 
+)
+
+sum
