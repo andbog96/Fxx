@@ -5,6 +5,13 @@
     )
 )
 
+(func mod (a b)
+    (cond (less a b)
+        a
+        (mod (minus a b) b)
+     )
+)
+
 (func mergeSort (list)
     (cond (not (islist list))
         `()
