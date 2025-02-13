@@ -8,6 +8,6 @@
     )
 )
 
-(filter `(1 2 3 123.3213 false -36) (lambda (element) (isint element)))
-(filter `(1 2 3 4 5 6 7 8) (lambda (element) (and (less element 5) (greater element 1))))
+(filter `(1 2 3 123.3213 false -36) (lambda (element) (isint element))) // (1 2 3 -36)
+(filter `(1 2 3 4 5 6 7 8) (lambda (element) (and (less element 5) (greater element 1)))) // (2 3 4) 
 

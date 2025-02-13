@@ -1,5 +1,5 @@
 (setq expr `(plus 10 20))
-(eval expr)
+(eval expr) // 30
 
 (setq expr `(plus 10 (minus 10 (times 2 2))))
-(eval expr)
+(eval expr) // 16

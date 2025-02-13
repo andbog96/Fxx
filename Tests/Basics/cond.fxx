@@ -1,4 +1,4 @@
-(cond true 42)
-(cond false 42)
-(cond true `(1 2 3 4) `(-1 -2 -3 -4))
-(cond false `(1 2 3 4) `(-1 -2 -3 -4))
+(cond true 42) // 42
+(cond false 42) // null
+(cond true `(1 2 3 4) `(-1 -2 -3 -4)) // (1 2 3 4)
+(cond false `(1 2 3 4) `(-1 -2 -3 -4)) // (-1 -2 -3 -4)

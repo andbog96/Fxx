@@ -2,17 +2,18 @@
     (prog ()
         (func helper (N divisor)
             (cond (greater (times divisor divisor) N)
-                (return true)
+                true
                 (cond (equal (mod N divisor) 0)
-                    (return false)
-                    (return (helper N (plus divisor 1)))
+                    false
+                    (helper N (plus divisor 1))
                 )
             )
         )
+        (return (helper N 2))
     )
 )
 
-(isPrime 2)
-(isPrime 5)
-(isPrime 10)
-(isPrime 37)
+(isPrime 2) // true
+(isPrime 5) // true
+(isPrime 10) // false
+(isPrime 37) // true

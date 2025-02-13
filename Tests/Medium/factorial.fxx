@@ -5,6 +5,6 @@
     ) 
 )
 
-(myFactorial 1)
-(myFactorial 5)
-(myFactorial 15)
+(myFactorial 1) // 1
+(myFactorial 5) // 12
+(myFactorial 10) // 3628800
