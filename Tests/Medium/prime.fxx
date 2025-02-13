@@ -2,10 +2,10 @@
     (prog ()
         (func helper (N divisor)
             (cond (greater (times divisor divisor) N)
-                true
+                (return true)
                 (cond (equal (mod N divisor) 0)
-                    false
-                    (helper N (plus divisor 1))
+                    (return false)
+                    (return (helper N (plus divisor 1)))
                 )
             )
         )

@@ -1,0 +1,12 @@
+(func repeat (element n)
+    (prog()
+        (cond (lesseq n 0)
+            (return `())
+        )
+        (return (cons `(element) (repeat element (minus n 1))))
+    )
+)
+
+(repeat 5 10)
+(repeat false -3)
+(repeat `(1 2) 2)

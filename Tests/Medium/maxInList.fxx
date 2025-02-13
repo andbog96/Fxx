@@ -5,10 +5,10 @@
             (setq h (head list))
             (setq t (tail list))
             (cond (isnull t)
-                h
+                (return h)
                 (cond (less h t)
-                    t
-                    h 
+                    (return t)
+                    (return h) 
                 )
              )
         )
