@@ -13,7 +13,7 @@
     )
 )
 
-(isPrime 2)
-(isPrime 5)
-(isPrime 10)
-(isPrime 37)
+(isPrime 2) // true
+(isPrime 5) // true
+(isPrime 10) // false
+(isPrime 37) // true

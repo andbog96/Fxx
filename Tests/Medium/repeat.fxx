@@ -7,6 +7,6 @@
     )
 )
 
-(repeat 5 10)
-(repeat false -3)
-(repeat `(1 2) 2)
+(repeat 5 10) // (5 5 5 5 5 5 5 5 5 5)
+(repeat false -3) // ()
+(repeat `(1 2) 2) // ((1 2) (1 2))
