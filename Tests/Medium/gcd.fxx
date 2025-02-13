@@ -1,0 +1,15 @@
+(func mod (a b)
+    (cond (equal b 0)
+        null
+        (minus a (times b (divide a b)))
+    )
+)
+
+(func gcd (a b)
+    (cond (equal b 0)
+      a
+      (gcd b (mod a b))
+    )
+)
+
+(gcd 15 10)
