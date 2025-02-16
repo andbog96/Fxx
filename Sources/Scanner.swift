@@ -13,21 +13,22 @@ func scan(_ source: String) throws -> [Lexeme] {
                 if let singleCharPredefined = Lexeme.Token.Predefined(rawValue: String(line[columnIndex...columnIndex])) {
                     if startIndex != columnIndex {
                         let candidate = String(line[startIndex..<columnIndex])
-                        let token: Lexeme.Token
-                        if let predefined = Lexeme.Token.Predefined(rawValue: String(line[startIndex..<columnIndex])) {
-                            if predefined == .comment {
-                                return lexemes
-                            } else {
-                                token = .predefined(predefined)
+                        let token: Lexeme.Token =
+                            if let predefined = Lexeme.Token.Predefined(rawValue: candidate) {
+                                .predefined(predefined)
+                            } else if candidate.first?.isLetter == true,
+                                      candidate.allSatisfy(\.isLetter || \.isNumber) {
+                                .identifier(candidate)
+                            } else if let value = Int(candidate) {
+                                .integer(value)
+                            } else { // Add Real
+                                throw ScanError.parsingFailed(line: lineIndex, column: columnIndex)
                             }
-                        } else if candidate.first?.isLetter == true,
-                                  candidate.allSatisfy(\.isLetter || \.isNumber) {
-                            token = .identifier(candidate)
-                        } else if let value = Int(candidate) {
-                            token = .integer(value)
-                        } else { // Add Real
-                            throw ScanError.parsingFailed(line: lineIndex, column: columnIndex)
+
+                        if case .predefined(.comment) = token {
+                            return lexemes
                         }
+
                         lexemes += [
                             Lexeme(
                                 token: token,
