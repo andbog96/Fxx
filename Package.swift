@@ -5,6 +5,7 @@ import PackageDescription
 
 let package = Package(
     name: "Fxx",
+    platforms: [.macOS(.v15)],
     dependencies: [
         .package(url: "https://github.com/apple/swift-argument-parser.git", from: "1.2.0"),
         .package(url: "https://github.com/SimplyDanny/SwiftLintPlugins", from: "0.58.2"),
