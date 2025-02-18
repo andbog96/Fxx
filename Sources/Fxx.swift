@@ -13,9 +13,9 @@ struct Fxx: ParsableCommand {
 
     mutating func run() throws {
         let input = try String(contentsOfFile: inputFileName, encoding: .utf8)
-        let lexemes = try scan(input)
-        lexemes.forEach { lex in
-            lex.debugPrintValue()
-        }
+        let lexemes = try [Lexeme](from: input)
+
+//        lexemes.forEach(print)
+        lexemes.forEach(debugPrint)
     }
 }
