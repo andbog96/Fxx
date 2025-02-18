@@ -33,17 +33,31 @@ extension Lexeme {
         var line: Int
         var range: ClosedRange<Int>
     }
+}
 
-    func debugPrintValue() {
-        switch self.token {
+extension Lexeme: CustomStringConvertible {
+    var description: String {
+        token.description
+    }
+}
+
+extension Lexeme: CustomDebugStringConvertible {
+    var debugDescription: String {
+        "\(span.line) : \(span.range) \(token.description)"
+    }
+}
+
+extension Lexeme.Token: CustomStringConvertible {
+    var description: String {
+        switch self {
         case .identifier(let name):
-            print("Identifier: \(name)")
+            "Identifier: \(name)"
         case .real(let value):
-            print("Real: \(value)")
+            "Real: \(value)"
         case .integer(let value):
-            print("Integer: \(value)")
+            "Integer: \(value)"
         case .predefined(let predefined):
-            print("Predefined: \(predefined.rawValue)")
+            "Predefined: \(predefined.rawValue)"
         }
     }
 }
