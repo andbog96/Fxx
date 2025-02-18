@@ -1,65 +1,71 @@
-fileprivate let START_ONE_LINE_COMMENT = "//"
+extension [Lexeme] {
+    init(from source: String) throws {
+        self = try source
+            .lazy
+            .split(whereSeparator: \.isNewline)
+            .map { line in // remove texts after //
+                line.split(separator: "//").first ?? []
+            }
+            .enumerated()
+            .filter(not • \.isEmpty • \.1)  // delete empty string
+            .map { (index, line) in // add imaginary whitespace to simplify parseLine
+                (index, line + " ")
+            }
+            .flatMap(parseLine)
+    }
+}
 
-fileprivate func parseLine(_ lineIndex : Int, _ line : String) throws -> [Lexeme] {
-    var lexemes : [Lexeme] = []
+private func parseLine(index lineIndex: Int, line: ArraySlice<Character>) throws -> [Lexeme] {
+    let lineNumber = lineIndex + 1
+
+    var lexemes = [] as [Lexeme]
     var startIndex = line.startIndex
+
     for columnIndex in line.indices {
-        if line[columnIndex].isWhitespace
-            || Lexeme.Token.Predefined(rawValue: String(line[columnIndex...columnIndex])) != nil {
-            let candidate = String(line[startIndex..<columnIndex])
-            if !candidate.isEmpty {
-                let leftIndex = line.distance(from: line.startIndex, to: startIndex)   
-                let rightIndex = line.distance(from: line.startIndex, to: columnIndex) 
+        let currentChar = line[columnIndex]
+        let singleCharPredefined = Lexeme.Token.Predefined(rawValue: String(currentChar))
+
+        if currentChar.isWhitespace || singleCharPredefined != nil {
+            if startIndex < columnIndex {
+                let candidate = String(line[startIndex..<columnIndex])
+                let leftIndex = line.distance(from: line.startIndex, to: startIndex)
+                let rightIndex = line.distance(from: line.startIndex, to: columnIndex)
+
                 let token: Lexeme.Token =
                     if let predefined = Lexeme.Token.Predefined(rawValue: candidate) {
                         .predefined(predefined)
                     } else if candidate.first?.isLetter == true,
-                            candidate.allSatisfy(\.isLetter || \.isNumber) {
+                              candidate.allSatisfy(\.isLetter || \.isNumber) {
                         .identifier(candidate)
                     } else if let value = Int(candidate) {
                         .integer(value)
                     } else if let value = Double(candidate) {
                         .real(value)
                     } else {
-                        throw ScanError.parsingFailed(line: lineIndex, column: rightIndex)
+                        throw ScanError.parsingFailed(line: lineNumber, column: rightIndex)
                     }
 
                 lexemes += [
-                        Lexeme(
+                    Lexeme(
                         token: token,
-                        span: Lexeme.Span(line: lineIndex, range: leftIndex...rightIndex - 1)
+                        span: Lexeme.Span(line: lineNumber, range: ClosedRange(leftIndex..<rightIndex))
                     )
                 ]
             }
-            if let singleCharPredefined = Lexeme.Token.Predefined(rawValue: String(line[columnIndex...columnIndex])) {
+
+            if let singleCharPredefined {
                 let index = line.distance(from: line.startIndex, to: columnIndex)
                 lexemes += [
                     Lexeme(
                         token: .predefined(singleCharPredefined),
-                        span: Lexeme.Span(line: lineIndex, range: index...index)
+                        span: Lexeme.Span(line: lineNumber, range: index...index)
                     )
                 ]
-            }    
+            }
+
             startIndex = line.index(after: columnIndex)
         }
     }
+
     return lexemes
-
-}
-
-func scan(_ source: String) throws -> [Lexeme] {
-    return try source
-    .split(whereSeparator: \.isNewline)
-    .enumerated()
-    .map{(index, line : String.SubSequence) in // start line from 1
-        (index + 1, line)
-    }
-    .map{(index, line : String.SubSequence) in // remove texts after // 
-        (index, line.split(separator: START_ONE_LINE_COMMENT, omittingEmptySubsequences: false).first!)
-    }
-    .filter{(_, line : Substring.SubSequence) in !line.isEmpty}  // delete empty string
-    .map{(index, line : Substring.SubSequence) in // add imaginary whitespace to simplify parseLine
-        (index, line + " ")
-    }
-    .flatMap(parseLine)
 }
