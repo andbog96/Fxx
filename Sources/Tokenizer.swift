@@ -32,18 +32,21 @@ extension Tokenizer {
                     let leftIndex = line.distance(from: line.startIndex, to: startIndex)
                     let rightIndex = line.distance(from: line.startIndex, to: columnIndex)
 
-                    let token: Lexeme.Token =
-                        if let keyword = Lexeme.Token.Keyword(rawValue: candidate) {
-                            .keyword(keyword)
-                        } else if let identifier = Lexeme.Token.Identifier(candidate) {
-                            .identifier(identifier)
-                        } else if let value = Int(candidate) {
-                            .literal(.integer(value))
-                        } else if let value = Double(candidate) {
-                            .literal(.real(value))
-                        } else {
-                            throw ScanError.parsingFailed(line: lineNumber, column: rightIndex)
-                        }
+                    let token =
+                        Lexeme.Token.Keyword(rawValue: candidate)
+                            .map(Lexeme.Token.keyword) ??
+                        Lexeme.Token.Identifier(candidate)
+                            .map(Lexeme.Token.identifier) ??
+                        Int(candidate)
+                            .map(Lexeme.Token.Literal.integer)
+                            .map(Lexeme.Token.literal) ??
+                        Double(candidate)
+                            .map(Lexeme.Token.Literal.real)
+                            .map(Lexeme.Token.literal)
+
+                    guard let token else {
+                        throw ScanError.parsingFailed(line: lineNumber, column: rightIndex)
+                    }
 
                     lexemes += [
                         Lexeme(
