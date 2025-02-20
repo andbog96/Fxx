@@ -13,7 +13,7 @@ struct Fxx: ParsableCommand {
 
     mutating func run() throws {
         let input = try String(contentsOfFile: inputFileName, encoding: .utf8)
-        let lexemes = try [Lexeme](from: input)
+        let lexemes = try Tokenizer.scan(from: input)
 
 //        lexemes.forEach(print)
         lexemes.forEach(debugPrint)

@@ -28,6 +28,7 @@ precedencegroup CompositionPrecedence {
     higherThan: BitwiseShiftPrecedence
 }
 
+// TODO: заменить на compose(...), попробовать написать через вариадики
 infix operator • : CompositionPrecedence
 
 @inlinable
