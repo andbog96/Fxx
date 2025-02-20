@@ -5,14 +5,14 @@ extension Tokenizer {
         try source
             .lazy
             .split(whereSeparator: \.isNewline)
+            .map { line in // add newline to simplify parseLine
+                line + "\n"
+            }
             .map { line in // remove texts after //
                 line.split(separator: "//").first ?? []
             }
             .enumerated()
             .filter(not • \.isEmpty • \.1)  // delete empty string
-            .map { (index, line) in // add imaginary whitespace to simplify parseLine
-                (index, line + " ")
-            }
             .flatMap(parseLine)
     }
 
