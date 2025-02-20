@@ -5,10 +5,10 @@ struct Lexeme {
 
 extension Lexeme {
     enum Token {
-        case keyword(Keyword)
         case punctuation(Punctuation)
-        case identifier(Identifier)
+        case keyword(Keyword)
         case literal(Literal)
+        case identifier(Identifier)
     }
 
     struct Span {
@@ -18,6 +18,12 @@ extension Lexeme {
 }
 
 extension Lexeme.Token {
+    enum Punctuation: Character {
+        case parenthesisLeft = "("
+        case parenthesisRight = ")"
+        case quoteSign = "'"
+    }
+
     enum Keyword: String {
         case quote
         case setq
@@ -30,10 +36,11 @@ extension Lexeme.Token {
         case `break`
     }
 
-    enum Punctuation: Character {
-        case parenthesisLeft = "("
-        case parenthesisRight = ")"
-        case quoteSign = "'"
+    enum Literal {
+        case null(Null)
+        case boolean(Boolean)
+        case integer(Int)
+        case real(Double)
     }
 
     struct Identifier {
@@ -48,26 +55,18 @@ extension Lexeme.Token {
             self.value = value
         }
     }
-
-    enum Literal {
-        case real(Double)
-        case integer(Int)
-        case boolean(Boolean)
-        case null(Null)
-    }
 }
 
 extension Lexeme.Token.Literal {
+    enum Null: String {
+        case null
+    }
+
     enum Boolean: String {
         case `true`
         case `false`
     }
-
-    enum Null: String {
-        case null
-    }
 }
-
 
 extension Lexeme: CustomStringConvertible {
     var description: String {
@@ -84,14 +83,14 @@ extension Lexeme: CustomDebugStringConvertible {
 extension Lexeme.Token: CustomStringConvertible {
     var description: String {
         switch self {
+        case .punctuation(let value):
+            "Punctuation: \(value.rawValue)"
         case .keyword(let value):
             "Keyword: \(value)"
-        case .punctuation(let value):
-            "Punctuation: \(value)"
-        case .identifier(let name):
-            "Identifier: \(name)"
         case .literal(let value):
             "\(value)"
+        case .identifier(let value):
+            "Identifier: \(value)"
         }
     }
 }
@@ -99,14 +98,14 @@ extension Lexeme.Token: CustomStringConvertible {
 extension Lexeme.Token.Literal: CustomStringConvertible {
     var description: String {
         switch self {
-        case .real(let value):
-            "Real: \(value)"
+        case .null(let value):
+            "\(value)"
+        case .boolean(let value):
+            "Boolean: \(value)"
         case .integer(let value):
             "Integer: \(value)"
-        case .boolean(let value):
-            value.rawValue
-        case .null(let value):
-            value.rawValue
+        case .real(let value):
+            "Real: \(value)"
         }
     }
 }

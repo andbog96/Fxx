@@ -28,21 +28,31 @@ extension Tokenizer {
 
             if currentChar.isWhitespace || punctuation != nil {
                 if startIndex < columnIndex {
-                    let candidate = String(line[startIndex..<columnIndex])
                     let leftIndex = line.distance(from: line.startIndex, to: startIndex)
                     let rightIndex = line.distance(from: line.startIndex, to: columnIndex)
+                    let candidate = String(line[startIndex..<columnIndex])
 
-                    let token =
-                        Lexeme.Token.Keyword(rawValue: candidate)
-                            .map(Lexeme.Token.keyword) ??
-                        Lexeme.Token.Identifier(candidate)
-                            .map(Lexeme.Token.identifier) ??
-                        Int(candidate)
-                            .map(Lexeme.Token.Literal.integer)
-                            .map(Lexeme.Token.literal) ??
-                        Double(candidate)
-                            .map(Lexeme.Token.Literal.real)
-                            .map(Lexeme.Token.literal)
+                    let token: Lexeme.Token? =
+                        .Keyword(rawValue: candidate)
+                            .map(Lexeme.Token.keyword)
+                        ??
+                        (
+                            .Null(rawValue: candidate)
+                                .map(Lexeme.Token.Literal.null)
+                            ??
+                            .Boolean(rawValue: candidate)
+                                .map(Lexeme.Token.Literal.boolean)
+                            ??
+                            Int(candidate)
+                                .map(Lexeme.Token.Literal.integer)
+                            ??
+                            Double(candidate)
+                                .map(Lexeme.Token.Literal.real)
+                        )
+                        .map(Lexeme.Token.literal)
+                        ??
+                        .Identifier(candidate)
+                            .map(Lexeme.Token.identifier)
 
                     guard let token else {
                         throw ScanError.parsingFailed(line: lineNumber, column: rightIndex)
