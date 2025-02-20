@@ -12,7 +12,7 @@ extension Tokenizer {
                 line.split(separator: "//").first ?? []
             }
             .enumerated()
-            .filter(not • \.isEmpty • \.1)  // delete empty string
+            .filter(compose(not, \.isEmpty, \.1))  // delete empty string
             .flatMap(parseLine)
     }
 

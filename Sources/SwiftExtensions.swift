@@ -23,50 +23,19 @@ public func not(value: Bool) -> Bool {
     !value
 }
 
-precedencegroup CompositionPrecedence {
-    associativity: right
-    higherThan: BitwiseShiftPrecedence
-}
-
-// TODO: заменить на compose(...), попробовать написать через вариадики
-infix operator • : CompositionPrecedence
-
 @inlinable
-public func • <A, B, C> (f: @escaping (B) -> C, g: @escaping (A) -> B) -> (A) -> C {
+public func compose<A, B, C>(
+    _ f: @escaping (B) -> C,
+    _ g: @escaping (A) -> B
+) -> (A) -> C {
     { x in f(g(x)) }
 }
 
 @inlinable
-public func • <B, C> (f: @escaping (B) -> C, g: @escaping () -> B) -> () -> C {
-    { f(g()) }
-}
-
-@inlinable
-public func • (f: @escaping () -> Void, g: @escaping () -> Void) -> () -> Void {
-    { g(); f() }
-}
-
-@inlinable
-public func • <A>(f: @escaping (inout A) -> Void, g: @escaping (inout A) -> Void) -> (inout A) -> Void {
-    { x in g(&x); f(&x) }
-}
-
-@inlinable
-public func • <A, B, C> (f: @escaping (B) throws -> C, g: @escaping (A) throws -> B) -> (A) throws -> C {
-    { x in try f(g(x)) }
-}
-
-@inlinable
-public func • <B, C> (f: @escaping (B) throws -> C, g: @escaping () throws -> B) -> () throws -> C {
-    { try f(g()) }
-}
-
-@inlinable
-public func • (f: @escaping () throws -> Void, g: @escaping () throws -> Void) -> () throws -> Void {
-    { try g(); try f() }
-}
-
-@inlinable
-public func • <A>(f: @escaping (inout A) throws -> Void, g: @escaping (inout A) throws -> Void) -> (inout A) throws -> Void {
-    { x in try g(&x); try f(&x) }
+public func compose<A, B, C, D>(
+    _ f: @escaping (C) -> D,
+    _ g: @escaping (B) -> C,
+    _ h: @escaping (A) -> B
+) -> (A) -> D {
+    compose(f, compose(g, h))
 }
