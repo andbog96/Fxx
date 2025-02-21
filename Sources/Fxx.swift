@@ -8,7 +8,14 @@ import ArgumentParser
 
 @main
 struct Fxx: ParsableCommand {
+    @Argument(help: "Source file to run")
+    var inputFileName: String
+
     mutating func run() throws {
-        print("Hello, world!")
+        let input = try String(contentsOfFile: inputFileName, encoding: .utf8)
+        let lexemes = try Tokenizer.scan(from: input)
+
+//        lexemes.forEach(print)
+        lexemes.forEach(debugPrint)
     }
 }

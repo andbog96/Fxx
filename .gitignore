@@ -7,4 +7,4 @@ DerivedData/
 .swiftpm/xcode
 .netrc
 .vscode
-.dev
+dev
