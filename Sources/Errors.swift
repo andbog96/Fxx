@@ -1,3 +1,6 @@
-enum ScanError: Error {
-    case parsingFailed(line: Int, column: Int)
+extension Lexeme {
+    enum ScanError: Error {
+        case invalidToken(span: Span)
+        case unexpected(lineNumber: Int)
+    }
 }
