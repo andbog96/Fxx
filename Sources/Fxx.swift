@@ -1,9 +1,3 @@
-// The Swift Programming Language
-// https://docs.swift.org/swift-book
-// 
-// Swift Argument Parser
-// https://swiftpackageindex.com/apple/swift-argument-parser/documentation
-
 import ArgumentParser
 
 @main
@@ -13,7 +7,7 @@ struct Fxx: ParsableCommand {
 
     mutating func run() throws {
         let input = try String(contentsOfFile: inputFileName, encoding: .utf8)
-        let lexemes = try Tokenizer.scan(from: input)
+        let lexemes = try Lexeme.scan(from: input)
 
 //        lexemes.forEach(print)
         lexemes.forEach(debugPrint)

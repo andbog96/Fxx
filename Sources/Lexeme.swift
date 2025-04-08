@@ -9,6 +9,31 @@ extension Lexeme {
         case keyword(Keyword)
         case literal(Literal)
         case identifier(Identifier)
+
+        init?(rawValue: String) {
+            guard let firstCharacter = rawValue.first else {
+                return nil
+            }
+
+            let value =
+                Punctuation(rawValue: firstCharacter)
+                    .map(Self.punctuation)
+                ??
+                Keyword(rawValue: rawValue)
+                    .map(Self.keyword)
+                ??
+                Literal(rawValue: rawValue)
+                    .map(Self.literal)
+                ??
+                Identifier(rawValue: rawValue)
+                    .map(Self.identifier)
+
+            guard let value else {
+                return nil
+            }
+
+            self = value
+        }
     }
 
     struct Span {
@@ -41,18 +66,39 @@ extension Lexeme.Token {
         case boolean(Boolean)
         case integer(Int)
         case real(Double)
+
+        init?(rawValue: String) {
+            let value =
+                Null(rawValue: rawValue)
+                    .map(Self.null)
+                ??
+                Boolean(rawValue: rawValue)
+                    .map(Self.boolean)
+                ??
+                Int(rawValue)
+                    .map(Self.integer)
+                ??
+                Double(rawValue)
+                    .map(Self.real)
+
+            guard let value else {
+                return nil
+            }
+
+            self = value
+        }
     }
 
     struct Identifier {
         let value: String
 
-        init?(_ value: String) {
-            guard value.first?.isLetter == true,
-                  value.allSatisfy(\.isLetter || \.isNumber) else {
+        init?(rawValue: String) {
+            guard rawValue.first?.isLetter == true,
+                  rawValue.allSatisfy(\.isLetter || \.isNumber) else {
                 return nil
             }
 
-            self.value = value
+            self.value = rawValue
         }
     }
 }
