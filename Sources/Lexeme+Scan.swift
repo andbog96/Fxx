@@ -1,3 +1,5 @@
+import NonEmpty
+
 extension Lexeme {
     static func scan(from source: String) throws -> [Lexeme] {
         try source
@@ -5,10 +7,10 @@ extension Lexeme {
             .enumerated()
             .lazy
             .map { index, line in
-                (number: index + 1, line: line)
+                (lineNumber: index + 1, line: line)
             }
-            .map { number, line in
-                (number: number, line: line.split(separator: "//").first ?? [])
+            .map { lineNumber, line in
+                (lineNumber: lineNumber, line: line.split(separator: "//").first ?? [])
             }
             .filter(compose(not, \.isEmpty, \.line))
             .flatMap { lineNumber, line in
@@ -20,17 +22,15 @@ extension Lexeme {
                     .split(whereSeparator: \.character.isWhitespace)
                     .lazy
                     .flatMap { word in
-                        word.splitKeepingSeparators(whereSeparator: compose(not, isNil, Token.Punctuation.init(rawValue:), \.character))
+                        word.splitKeepingSeparators(
+                            whereSeparator: compose(not, isNil, Token.Punctuation.init(rawValue:), \.character)
+                        )
                     }
+                    .compactMap(NonEmpty.init(rawValue:))
                     .map { word in
-                        guard let first = word.first,
-                              let last = word.last else {
-                            throw ScanError.unexpected(lineNumber: lineNumber)
-                        }
+                        let span = Span(line: lineNumber, range: word.first.column...word.last.column)
 
-                        let span = Span(line: lineNumber, range: first.column...last.column)
-
-                        guard let token = Token(rawValue: String(word.map(\.character))) else {
+                        guard let token = Token(rawValue: NonEmptyString(word.map(\.character))) else {
                             throw ScanError.invalidToken(span: span)
                         }
 
@@ -62,5 +62,11 @@ private extension Collection {
         }
 
         return result
+    }
+}
+
+private extension NonEmptyString {
+    init(_ nonEmptyElements: NonEmpty<[Character]>) {
+        self.init(rawValue: String(nonEmptyElements.rawValue))!
     }
 }

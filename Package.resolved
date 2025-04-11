@@ -1,5 +1,5 @@
 {
-  "originHash" : "4ec600a297b1685914dbe4cd22acc5b661c530e4c7d3aaf749f3b4468b6dec07",
+  "originHash" : "a47ac3a82002bb7ae0da14106d62830ca718056ce3455c8212e7e5ccea1c1402",
   "pins" : [
     {
       "identity" : "swift-argument-parser",
@@ -11,12 +11,12 @@
       }
     },
     {
-      "identity" : "swiftlintplugins",
+      "identity" : "swift-nonempty",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/SimplyDanny/SwiftLintPlugins",
+      "location" : "https://github.com/pointfreeco/swift-nonempty.git",
       "state" : {
-        "revision" : "7a3d77f3dd9f91d5cea138e52c20cfceabf352de",
-        "version" : "0.58.2"
+        "revision" : "1fd3f067ebc3900d200aa7e977fdb614cc5533bc",
+        "version" : "0.5.0"
       }
     }
   ],
