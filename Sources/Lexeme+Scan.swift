@@ -66,7 +66,7 @@ private extension Collection {
 }
 
 private extension NonEmptyString {
-    init(_ nonEmptyElements: NonEmpty<[Character]>) {
-        self.init(rawValue: String(nonEmptyElements.rawValue))!
+    init(_ nonEmptyElements: NonEmptyArray<Character>) {
+        self = NonEmpty(rawValue: String(nonEmptyElements.rawValue)).unsafelyUnwrapped
     }
 }

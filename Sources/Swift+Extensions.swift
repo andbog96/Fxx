@@ -1,13 +1,17 @@
+infix operator .&& : LogicalConjunctionPrecedence
+
 @inlinable
-public func && <T>(
+public func .&& <T>(
     f: @escaping (T) -> Bool,
     g: @escaping (T) -> Bool
 ) -> (T) -> Bool {
     { f($0) && g($0) }
 }
 
+infix operator .|| : LogicalDisjunctionPrecedence
+
 @inlinable
-public func || <T>(
+public func .|| <T>(
     f: @escaping (T) -> Bool,
     g: @escaping (T) -> Bool
 ) -> (T) -> Bool {
@@ -32,6 +36,11 @@ public func not(_ value: Bool) -> Bool {
 @inlinable
 public func isNil<T>(_ value: T?) -> Bool {
     value == nil
+}
+
+@inlinable
+public func const<I, V>(_ value: V) -> (I) -> V {
+    { _ in value }
 }
 
 @inlinable
