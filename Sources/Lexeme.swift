@@ -1,3 +1,5 @@
+import NonEmpty
+
 struct Lexeme {
     var token: Token
     var span: Span
@@ -10,13 +12,9 @@ extension Lexeme {
         case literal(Literal)
         case identifier(Identifier)
 
-        init?(rawValue: String) {
-            guard let firstCharacter = rawValue.first else {
-                return nil
-            }
-
+        init?(rawValue: NonEmptyString) {
             let value =
-                Punctuation(rawValue: firstCharacter)
+                Punctuation(rawValue: rawValue.first)
                     .map(Self.punctuation)
                 ??
                 Keyword(rawValue: rawValue)
@@ -49,7 +47,7 @@ extension Lexeme.Token {
         case quoteSign = "'"
     }
 
-    enum Keyword: String {
+    enum Keyword: NonEmptyString {
         case quote
         case setq
         case `func`
@@ -67,7 +65,7 @@ extension Lexeme.Token {
         case integer(Int)
         case real(Double)
 
-        init?(rawValue: String) {
+        init?(rawValue: NonEmptyString) {
             let value =
                 Null(rawValue: rawValue)
                     .map(Self.null)
@@ -75,10 +73,10 @@ extension Lexeme.Token {
                 Boolean(rawValue: rawValue)
                     .map(Self.boolean)
                 ??
-                Int(rawValue)
+                Int(rawValue.rawValue)
                     .map(Self.integer)
                 ??
-                Double(rawValue)
+                Double(rawValue.rawValue)
                     .map(Self.real)
 
             guard let value else {
@@ -90,10 +88,10 @@ extension Lexeme.Token {
     }
 
     struct Identifier {
-        let value: String
+        let value: NonEmptyString
 
-        init?(rawValue: String) {
-            guard rawValue.first?.isLetter == true,
+        init?(rawValue: NonEmptyString) {
+            guard rawValue.first.isLetter,
                   rawValue.allSatisfy(\.isLetter || \.isNumber) else {
                 return nil
             }
@@ -104,11 +102,11 @@ extension Lexeme.Token {
 }
 
 extension Lexeme.Token.Literal {
-    enum Null: String {
+    enum Null: NonEmptyString {
         case null
     }
 
-    enum Boolean: String {
+    enum Boolean: NonEmptyString {
         case `true`
         case `false`
     }
