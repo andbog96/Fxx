@@ -23,7 +23,7 @@ extension Lexeme {
                     .lazy
                     .flatMap { word in
                         word.splitKeepingSeparators(
-                            whereSeparator: compose(not, isNil, Token.Punctuation.init(rawValue:), \.character)
+                            whereSeparator: compose(not, isNil, Punctuation.init(rawValue:), \.character)
                         )
                     }
                     .compactMap(NonEmpty.init(rawValue:))
