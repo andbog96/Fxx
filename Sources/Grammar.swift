@@ -6,7 +6,7 @@ enum Punctuation: Character {
     case quoteSign = "'"
 }
 
-struct Identifier: Equatable {
+struct Identifier {
     let value: NonEmptyString
 
     init?(rawValue: NonEmptyString) {
@@ -19,7 +19,9 @@ struct Identifier: Equatable {
     }
 }
 
-enum Literal: Equatable {
+extension Identifier: Equatable {}
+
+enum Literal {
     case null(Null)
     case boolean(Boolean)
     case integer(Int)
@@ -57,6 +59,8 @@ extension Literal {
         self = value
     }
 }
+
+extension Literal: Equatable {}
 
 extension Literal: CustomStringConvertible {
     var description: String {

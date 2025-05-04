@@ -1,6 +1,6 @@
 import NonEmpty
 
-enum Token: Equatable {
+enum Token {
     case punctuation(Punctuation)
     case literal(Literal)
     case identifier(Identifier)
@@ -25,6 +25,8 @@ extension Token {
         self = value
     }
 }
+
+extension Token: Equatable {}
 
 extension Token: CustomStringConvertible {
     var description: String {

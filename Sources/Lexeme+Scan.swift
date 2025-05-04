@@ -2,7 +2,7 @@ import NonEmpty
 
 extension Lexeme {
     static func scan(from source: String) throws -> [Lexeme] {
-        try source
+        let lines = source
             .split(omittingEmptySubsequences: false, whereSeparator: \.isNewline)
             .enumerated()
             .lazy
@@ -12,7 +12,9 @@ extension Lexeme {
             .map { lineNumber, line in
                 (lineNumber: lineNumber, line: line.split(separator: "//").first ?? [])
             }
-            .filter(compose(not, \.isEmpty, \.line))
+            .filter(not • \.isEmpty • \.line)
+
+        return try lines
             .flatMap { lineNumber, line in
                 try line
                     .enumerated()
@@ -23,7 +25,7 @@ extension Lexeme {
                     .lazy
                     .flatMap { word in
                         word.splitKeepingSeparators(
-                            whereSeparator: compose(not, isNil, Punctuation.init(rawValue:), \.character)
+                            whereSeparator: not • isNil • Punctuation.init(rawValue:) • \.character
                         )
                     }
                     .compactMap(NonEmpty.init(rawValue:))
@@ -40,28 +42,19 @@ extension Lexeme {
     }
 }
 
-private extension Collection {
+private extension ArraySlice {
     func splitKeepingSeparators(
         whereSeparator isSeparator: (Element) -> Bool
     ) -> [SubSequence] {
-        var result = [] as [SubSequence]
-        var currentChunkStartIndex = startIndex
-
-        for index in indices where isSeparator(self[index]) {
-            if currentChunkStartIndex < index {
-                let chunk = self[currentChunkStartIndex..<index]
-                result += [chunk]
+        reduce([]) { partialResult, element in
+            if !isSeparator(element),
+               let lastResult = partialResult.last,
+               lastResult.last.map(isSeparator) == false {
+                partialResult.dropLast() + [lastResult + [element]]
+            } else {
+                partialResult + [[element]]
             }
-            result += [self[index...index]]
-            currentChunkStartIndex = self.index(after: index)
         }
-
-        if currentChunkStartIndex < endIndex {
-            let lastChunk = self[currentChunkStartIndex..<endIndex]
-            result += [lastChunk]
-        }
-
-        return result
     }
 }
 
