@@ -11,7 +11,8 @@ struct Fxx: ParsableCommand {
 //        lexemes.forEach(print)
 //        lexemes.forEach(debugPrint)
 
-        let ast = Parser<AST>().parse(ArraySlice(lexemes.map(\.token)))
-        print(ast?.output)
+        let tokens = lexemes.map(\.token)
+        let q = Parser<AST>().parse(tokens)
+        print(q?.output)
     }
 }

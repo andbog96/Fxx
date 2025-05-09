@@ -7,7 +7,7 @@ enum Punctuation: Character {
 }
 
 struct Identifier {
-    let value: NonEmptyString
+    let rawValue: NonEmptyString
 
     init?(rawValue: NonEmptyString) {
         guard rawValue.first.isLetter,
@@ -15,7 +15,7 @@ struct Identifier {
             return nil
         }
 
-        self.value = rawValue
+        self.rawValue = rawValue
     }
 }
 

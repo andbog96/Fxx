@@ -48,6 +48,11 @@ public func curry<A, B, C>(_ f: @escaping (A, B) -> C) -> (A) -> (B) -> C {
     { a in { b in f(a, b) } }
 }
 
+@inlinable
+public func uncurry<A, B, C>(_ f: @escaping (A) -> (B) -> C) -> (A, B) -> C {
+    { a, b in f(a)(b) }
+}
+
 precedencegroup CompositionPrecedence {
     associativity: right
     higherThan: BitwiseShiftPrecedence
