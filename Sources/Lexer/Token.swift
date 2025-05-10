@@ -31,12 +31,10 @@ extension Token: Equatable {}
 extension Token: CustomStringConvertible {
     var description: String {
         switch self {
-        case .punctuation(let value):
-            "Punctuation: \(value.rawValue)"
-        case .literal(let value):
-            "\(value)"
-        case .identifier(let value):
-            "Identifier: \(value)"
+        case .punctuation(let value as Any),
+                .literal(let value as Any),
+                .identifier(let value as Any):
+           "\(value)"
         }
     }
 }

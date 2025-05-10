@@ -12,7 +12,7 @@ struct Fxx: ParsableCommand {
 //        lexemes.forEach(debugPrint)
 
         let tokens = lexemes.map(\.token)
-        let q = Parser<AST>().parse(tokens)
-        print(q?.output)
+        let ast = Parser<AST>().parse(tokens)?.output
+        debugPrint(ast!)
     }
 }

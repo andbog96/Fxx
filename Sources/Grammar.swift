@@ -6,6 +6,13 @@ enum Punctuation: Character {
     case quoteSign = "'"
 }
 
+extension Punctuation: CustomStringConvertible {
+    var description: String {
+        String(rawValue)
+    }
+}
+
+// MARK: - Identifier
 struct Identifier {
     let rawValue: NonEmptyString
 
@@ -21,6 +28,13 @@ struct Identifier {
 
 extension Identifier: Equatable {}
 
+extension Identifier: CustomStringConvertible {
+    var description: String {
+        rawValue.rawValue
+    }
+}
+
+// MARK: - Literal
 enum Literal {
     case null(Null)
     case boolean(Boolean)
@@ -65,14 +79,11 @@ extension Literal: Equatable {}
 extension Literal: CustomStringConvertible {
     var description: String {
         switch self {
-        case .null(let value):
+        case .null(let value as Any),
+             .boolean(let value as Any),
+             .integer(let value as Any),
+             .real(let value as Any):
             "\(value)"
-        case .boolean(let value):
-            "Boolean: \(value)"
-        case .integer(let value):
-            "Integer: \(value)"
-        case .real(let value):
-            "Real: \(value)"
         }
     }
 }
