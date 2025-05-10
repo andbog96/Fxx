@@ -1,13 +1,17 @@
+infix operator .&& : LogicalConjunctionPrecedence
+
 @inlinable
-public func && <T>(
+public func .&& <T>(
     f: @escaping (T) -> Bool,
     g: @escaping (T) -> Bool
 ) -> (T) -> Bool {
     { f($0) && g($0) }
 }
 
+infix operator .|| : LogicalDisjunctionPrecedence
+
 @inlinable
-public func || <T>(
+public func .|| <T>(
     f: @escaping (T) -> Bool,
     g: @escaping (T) -> Bool
 ) -> (T) -> Bool {
@@ -35,28 +39,31 @@ public func isNil<T>(_ value: T?) -> Bool {
 }
 
 @inlinable
-public func compose<T1, T2, T3>(
+public func const<I, V>(_ value: V) -> (I) -> V {
+    { _ in value }
+}
+
+@inlinable
+public func curry<A, B, C>(_ f: @escaping (A, B) -> C) -> (A) -> (B) -> C {
+    { a in { b in f(a, b) } }
+}
+
+@inlinable
+public func uncurry<A, B, C>(_ f: @escaping (A) -> (B) -> C) -> (A, B) -> C {
+    { a, b in f(a)(b) }
+}
+
+precedencegroup CompositionPrecedence {
+    associativity: right
+    higherThan: BitwiseShiftPrecedence
+}
+
+infix operator • : CompositionPrecedence
+
+@inlinable
+public func • <T1, T2, T3>(
     _ f2: @escaping (T2) -> T3,
     _ f1: @escaping (T1) -> T2
 ) -> (T1) -> T3 {
     { x in f2(f1(x)) }
-}
-
-@inlinable
-public func compose<T1, T2, T3, T4>(
-    _ f3: @escaping (T3) -> T4,
-    _ f2: @escaping (T2) -> T3,
-    _ f1: @escaping (T1) -> T2
-) -> (T1) -> T4 {
-    { x in f3(f2(f1(x))) }
-}
-
-@inlinable
-public func compose<T1, T2, T3, T4, T5>(
-    _ f4: @escaping (T4) -> T5,
-    _ f3: @escaping (T3) -> T4,
-    _ f2: @escaping (T2) -> T3,
-    _ f1: @escaping (T1) -> T2
-) -> (T1) -> T5 {
-    { x in f4(f3(f2(f1(x)))) }
 }
