@@ -8,11 +8,10 @@ struct Fxx: ParsableCommand {
     mutating func run() throws {
         let input = try String(contentsOfFile: inputFileName, encoding: .utf8)
         let lexemes = try Lexeme.scan(from: input)
-//        lexemes.forEach(print)
-//        lexemes.forEach(debugPrint)
-
-        let tokens = lexemes.map(\.token)
-        let ast = Parser<AST>().parse(tokens)?.output
-        debugPrint(ast!)
+        let (ast, _) = try Parser<AST>().run(lexemes[...])
+        print(ast)
+        let program = try Program(ast: ast)
+        let output = try Interpreter.run(program: program)
+        print(output)
     }
 }

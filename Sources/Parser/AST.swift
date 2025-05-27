@@ -8,15 +8,19 @@ struct AbstractSyntaxTree {
     indirect enum Node {
         case literal(Literal)
         case identifier(Identifier)
-        case list(NonEmptyArray<Node>)
+        case list([Node])
     }
 }
+
+extension AST: Equatable {}
 
 extension AST: CustomStringConvertible {
     var description: String {
         nodes.map(\.description).joined(separator: "\n\n")
     }
 }
+
+extension AST.Node: Equatable {}
 
 extension AST.Node: CustomStringConvertible {
     var description: String {
