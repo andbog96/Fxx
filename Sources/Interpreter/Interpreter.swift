@@ -85,8 +85,8 @@ enum Interpreter {
         case .specialForm(let specialForm):
             try evaluate(specialForm: specialForm, arguments: arguments, scope: scope)
 
-        case .predefinedFunction:
-            fatalError()
+        case .predefinedFunction(let predefinedFunction):
+            try evaluate(predefinedFunction: predefinedFunction, arguments: arguments, scope: scope)
 
         case .identifier(let identifier):
             if let _ = scope.lookup(identifier) {
@@ -114,7 +114,43 @@ enum Interpreter {
         case .quote:
             (.list(arguments), scope)
 //        case .setq:
-            
+
+        default:
+            fatalError()
+        }
+    }
+
+    private static func evaluate(predefinedFunction: Program.Element.PredefinedFunction, arguments: [Program.Element], scope: Scope ) throws -> (result: Program.Element, scope: Scope) {
+        switch predefinedFunction {
+        case .plus:
+            guard arguments.count == 2 else {
+                throw InterpreterError.invalidArguments
+            }
+
+            if case let (.literal(leftValue), .literal(rightValue)) = (arguments.first, arguments.last) {
+                let resultLiteral: Literal =
+                    switch (leftValue, rightValue) {
+                    case let (.real(left), .real(right)):
+                        .real(left + right)
+
+                    case let (.integer(left), .real(right)):
+                        .real(Double(left) + right)
+
+                    case let (.real(left), .integer(right)):
+                        .real(left + Double(right))
+
+                    case let (.integer(left), .integer(right)):
+                        .integer(left + right)
+
+                    default:
+                        throw InterpreterError.invalidArguments
+                    }
+                return (.literal(resultLiteral), scope)
+            } else {
+                throw InterpreterError.invalidArguments
+            }
+
+
         default:
             fatalError()
         }
