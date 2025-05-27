@@ -26,7 +26,7 @@ struct Identifier {
     }
 }
 
-extension Identifier: Equatable {}
+extension Identifier: Equatable, Hashable {}
 
 extension Identifier: CustomStringConvertible {
     var description: String {

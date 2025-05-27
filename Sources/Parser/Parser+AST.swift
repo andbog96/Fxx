@@ -10,67 +10,58 @@ extension Parser<AST> {
 
 extension Parser<AST.Node> {
     init() {
-        self = .or(
+        self = .or([
             Parser<Literal>()
                 .map(AST.Node.literal),
             Parser<Identifier>()
                 .map(AST.Node.identifier),
-            .quote
-                .map(AST.Node.list),
-            .list
-                .map(AST.Node.list),
-        )
+            .list,
+            .quote,
+        ])
     }
 
-    private static var quote: Parser<NonEmptyArray<AST.Node>> {
-        Parser<Punctuation>(.quoteSign)
-            .ignore
-            .flatMap { list }
-            .map(
-                NonEmpty.cons(
-                    AST.Node.identifier(Identifier(keyword: .quote))
-                )
-            )
-    }
-
-    private static var list: Parser<NonEmptyArray<AST.Node>> {
+    private static var list: Self {
         Parser<Punctuation>(.parenthesisLeft)
-            .ignore
-            .flatMap(\.some • Self.init)
+            .map(ignore)
+            .flatMap(\.many • Self.init)
             .flatMap { nodes in
                 Parser<Punctuation>(.parenthesisRight)
-                    .ignore
+                    .map(ignore)
                     .map { nodes }
             }
+            .map(AST.Node.list)
     }
 
     // Тоже самое только императивно
-    private static var list2: Parser<NonEmptyArray<AST.Node>> {
-        .init { input in
-            guard let (_, rest) = Parser<Punctuation>(.parenthesisLeft).parse(input),
-                  let (nodes, rest) = Self().some.parse(rest),
-                  let (_, rest) = Parser<Punctuation>(.parenthesisRight).parse(rest)
-            else {
-                return nil
+    private static var list2: Self {
+        Parser { input in
+            if case let (_, rest) = try Parser<Punctuation>(.parenthesisLeft).run(input),
+               case let (nodes, rest) = try Self().many.run(rest),
+               case let (_, rest) = try Parser<Punctuation>(.parenthesisRight).run(rest) {
+                let list = AST.Node.list(nodes)
+                return (list, rest)
             }
-
-            return (nodes, rest)
         }
+    }
+
+    private static var quote: Self {
+        Parser<Punctuation>(.quoteSign)
+            .map(ignore)
+            .flatMap(Self.init)
+            .map { node in
+                let quoteId = AST.Node.identifier(Identifier(specialForm: .quote))
+                return if case .list(let list) = node {
+                    [quoteId] + list
+                } else {
+                    [quoteId, node]
+                }
+            }
+            .map(AST.Node.list)
     }
 }
 
 private extension Identifier {
-    init(keyword: Keyword) {
-        rawValue = keyword.rawValue
-    }
-}
-
-private extension NonEmpty where Collection: RangeReplaceableCollection {
-    init(head: Element, tail: NonEmptyArray<Element>) {
-        self = NonEmpty([head] + tail).unsafelyUnwrapped
-    }
-
-    static var cons: (_ head: Element) -> (_ tail: NonEmptyArray<Element>) -> Self {
-        curry(NonEmpty.init(head:tail:))
+    init(specialForm: Program.Element.SpecialForm) {
+        rawValue = specialForm.rawValue
     }
 }
