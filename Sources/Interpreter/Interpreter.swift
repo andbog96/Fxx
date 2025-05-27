@@ -53,7 +53,7 @@ enum Interpreter {
             if let result = scope.lookup(identifier) {
                 (result, scope)
             } else {
-                throw InterpreterError.undefinedIdentifier(identifier)
+                (.identifier(identifier), scope)
             }
 
         case .specialForm,
@@ -83,11 +83,17 @@ enum Interpreter {
 
         return switch firstElement {
         case .specialForm(let specialForm):
-            try evaluate(specialForm: specialForm, arguments: arguments, scope: scope)
-
+            try evaluate(
+                specialForm: specialForm,
+                arguments: arguments,
+                scope: scope
+            )
         case .predefinedFunction(let predefinedFunction):
-            try evaluate(predefinedFunction: predefinedFunction, arguments: arguments, scope: scope)
-
+            try evaluate(
+                predefinedFunction: predefinedFunction,
+                arguments: arguments,
+                scope: scope
+            )
         case .identifier(let identifier):
             if let _ = scope.lookup(identifier) {
 
@@ -95,7 +101,6 @@ enum Interpreter {
             } else {
                 throw InterpreterError.undefinedIdentifier(identifier)
             }
-
         case .literal,
              .list:
             throw InterpreterError.notCallable
@@ -112,8 +117,21 @@ enum Interpreter {
     ) {
         switch specialForm {
         case .quote:
-            (.list(arguments), scope)
-//        case .setq:
+            return (.list(arguments), scope)
+        case .setq:
+            guard arguments.count == 2 else {
+                throw InterpreterError.invalidArguments
+            }
+
+            if case let .identifier(variableName) = arguments.first,
+                let value = arguments.last {
+                var newScope = scope
+                newScope.values[variableName] = value
+
+                return (value, newScope)
+            } else {
+                throw InterpreterError.invalidArguments
+            }
 
         default:
             fatalError()

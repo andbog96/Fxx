@@ -7,8 +7,7 @@ SimpleNaMe42
 (setq fibNumbers (quote 0 1 1 2 3 5))
 fibNumbers
 
-(setq fibNumbers '(0 1 1 2 3 5))
-fibNumbers
+(setq fibNumbers2 '(0 1 1 2 3 5))
+fibNumbers2
 
-(setq operation '(setq x 3.14))
-operation
+(plus 5 3.0)
